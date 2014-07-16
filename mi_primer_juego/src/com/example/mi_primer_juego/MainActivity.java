@@ -9,12 +9,14 @@ import org.andengine.engine.options.WakeLockOptions;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.bitmap.BitmapTexture;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 
@@ -28,6 +30,10 @@ public class MainActivity extends SimpleBaseGameActivity {
 	private BitmapTextureAtlas miAtlas;
 	private ITextureRegion personaje;
 	private Sprite charSprite;
+	
+	private ITiledTextureRegion texturaAnimada;
+	private AnimatedSprite spriteAnimado;
+	
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -59,9 +65,12 @@ public class MainActivity extends SimpleBaseGameActivity {
 		//Indicamos donde se encuentran las imagenes
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("sprites/");
 		//creamos el atlas,darle medidas y tipo de textura
-		miAtlas=new BitmapTextureAtlas(getTextureManager(), 70, 70, TextureOptions.DEFAULT);
+		miAtlas=new BitmapTextureAtlas(getTextureManager(), 800, 800, TextureOptions.DEFAULT);
 		//Ubicamos nuestra imagen en nuestro sheet(atlas)
 		personaje=BitmapTextureAtlasTextureRegionFactory.createFromAsset(miAtlas, this, "player.png",0,0);
+		texturaAnimada=BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(miAtlas, this, "animado.png", 66, 0,10,10);
+		
+		
 		//lo cargamos
 		miAtlas.load();
 		
@@ -76,12 +85,20 @@ public class MainActivity extends SimpleBaseGameActivity {
 	protected Scene onCreateScene() {
 
 		Scene sceneEjemplo = new Scene();
-		
+
 		//posicion x,posicion y ,textura y elemento andengine
-		
-		charSprite= new Sprite(50, 70, personaje, getVertexBufferObjectManager());
-		
+		charSprite= new Sprite(0, 200, personaje, getVertexBufferObjectManager());
 		sceneEjemplo.attachChild(charSprite);
+		
+		spriteAnimado=new AnimatedSprite(200, 200, texturaAnimada, getVertexBufferObjectManager());
+		long[] duracionFrame={200,200,200,200,200,200};
+		spriteAnimado.animate(duracionFrame,1,6,true);
+		
+		sceneEjemplo.attachChild(spriteAnimado);
+		
+		
+		
+		
 		
 		return sceneEjemplo;
 	}
