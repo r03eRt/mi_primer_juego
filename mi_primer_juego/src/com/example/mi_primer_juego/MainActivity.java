@@ -9,6 +9,12 @@ import org.andengine.engine.options.WakeLockOptions;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
+import org.andengine.entity.sprite.Sprite;
+import org.andengine.opengl.texture.TextureOptions;
+import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
+import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
+import org.andengine.opengl.texture.bitmap.BitmapTexture;
+import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 
@@ -19,6 +25,9 @@ public class MainActivity extends SimpleBaseGameActivity {
 	private static int WIDTH = 800;
 	private static int HEIGHT= 480;
 	Rectangle rectangulo;
+	private BitmapTextureAtlas miAtlas;
+	private ITextureRegion personaje;
+	private Sprite charSprite;
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -47,9 +56,18 @@ public class MainActivity extends SimpleBaseGameActivity {
 		 * relevantes en este ejemplo y las trataremos despues, ahora vamos a trabajar con
 		 * recursos que no debemos cargar*/		
 		
-		rectangulo = new Rectangle(mCamera.getWidth()/2, mCamera.getHeight()/2, 100, 100, getVertexBufferObjectManager());
-		//RGB cada valor contiene 256 colores, pero aqui se manejan como flotantes de 0.0 a 1.0
-		rectangulo.setColor(0.3f, 0.5f, 0.2f);
+		//Indicamos donde se encuentran las imagenes
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("sprites/");
+		//creamos el atlas,darle medidas y tipo de textura
+		miAtlas=new BitmapTextureAtlas(getTextureManager(), 70, 70, TextureOptions.DEFAULT);
+		//Ubicamos nuestra imagen en nuestro sheet(atlas)
+		personaje=BitmapTextureAtlasTextureRegionFactory.createFromAsset(miAtlas, this, "player.png",0,0);
+		//lo cargamos
+		miAtlas.load();
+		
+		//hemos creado 70x70 para meter una imagen de 47x66,comenzando en el punto 0,0
+		
+		
 		
 		
 	}
@@ -59,9 +77,11 @@ public class MainActivity extends SimpleBaseGameActivity {
 
 		Scene sceneEjemplo = new Scene();
 		
-		//Añadimos el rectangulo a la escene
-		sceneEjemplo.attachChild(rectangulo);
+		//posicion x,posicion y ,textura y elemento andengine
 		
+		charSprite= new Sprite(50, 70, personaje, getVertexBufferObjectManager());
+		
+		sceneEjemplo.attachChild(charSprite);
 		
 		return sceneEjemplo;
 	}
